@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch Ads Now</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background-color: #f9f9f9;
+padding: 20px;
+text-align: center;
+}
+h2 {
+margin-bottom: 10px;
+}
+button.ad-btn {
+display: block;
+margin: 15px auto;
+padding: 15px;
+width: 90%;
+max-width: 400px;
+font-size: 16px;
+background-color: #007bff;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+}
+button.ad-btn:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+#status {
+margin-top: 20px;
+font-size: 18px;
+color: green;
+}
+</style>
+</head>
+<body>
+
+<h2>🎥 Watch Ads to Earn</h2>
+<p>Click at least <strong>3 ads</strong> to complete today's goal.</p>
+
+  <!-- Adsterra Direct Link Ad Button -->
+  <a class="ad-btn" href="https://www.profitableratecpm.com/izg4ekfpv?key=133cdabfef4cb5e80876952824d61c78" target="_blank">
+    🚀 Watch Adsterra Ad
+  </a>
+<!-- PropellerAds (add when ready) -->
+<button class="ad-btn" onclick="openAd('https://your-propeller-link1', this)">Watch Ad 7 (PropellerAds)</button>
+<button class="ad-btn" onclick="openAd('https://your-propeller-link2', this)">Watch Ad 8 (PropellerAds)</button>
+<button class="ad-btn" onclick="openAd('https://your-propeller-link3', this)">Watch Ad 9 (PropellerAds)</button>
+
+<div id="status">Ads Watched: 0 / 3</div>
+
+<script>
+let watchedCount = 0;
+
+function openAd(url, button) {
+// Open ad in new tab
+window.open(url, '_blank');
+
+// Disable the button
+button.disabled = true;
+
+// Count the click
+watchedCount++;
+document.getElementById('status').innerText = `Ads Watched: ${watchedCount} / 3`;
+
+if (watchedCount >= 3) {
+document.getElementById('status').innerText = `✅ You've completed today's ad goal!`;
+}
+}
+</script>
+</boboyour-link2'q
