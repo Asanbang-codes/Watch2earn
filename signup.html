@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00a86b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #008f5a;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+  </style>
+  <title>SignUp</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+      authDomain: "watch2earn-28ca3.firebaseapp.com",
+      projectId: "watch2earn-28ca3",
+      storageBucket: "watch2earn-28ca3.appspot.com",
+      messagingSenderId: "566681383488",
+      appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signUpUser = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Signup successful!");
+          window.location.href = "watch-ads.html";
+        })
+        .catch(error => alert("Error: " + error.message));
+    };
+  </script>
+</head>
+<body>
+  <p>WELCOME TO WATCH2EARN PLATFORM EARN MONEY BY WATCHING ADS DAILY</p>
+  <h2>Sign Up</h2>
+  <input type="email" id="signupEmail" placeholder="Email" required><br><br>
+  <input type="password" id="signupPassword" placeholder="Password" required><br><br>
+  <button id="signupBtn">Sign Up</button>
+  <p>Already have an account? <a href="login.html">Login</a></p>
+  .catch((error) => {
+  if (error.code === 'auth/email-already-in-use') {
+    alert("⚠️ This email is already registered. Please log in.");
+  } else {
+    alert("❌ Signup error: " + error.message);
+  }
+});
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
