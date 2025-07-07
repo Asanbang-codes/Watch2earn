@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Withdraw</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+    }
+    header {
+      padding: 15px;
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      font-size: 20px;
+    }
+    .section {
+      padding: 20px;
+    }
+    .earnings {
+      background: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .invite-text {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    .bottom-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 18px;
+    }
+    .bottom-nav .active {
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+
+<header>Withdraw Earnings</header>
+
+<div class="section">
+  <div class="earnings">
+    <p><strong>From Ad Watch:</strong> $10.00</p>
+    <p><strong>From Invites (5%):</strong> $2.50</p>
+    <p><strong>Bonus Earnings:</strong> $1.00</p>
+    <p><strong>Total Earnings:</strong> $13.50</p>
+    <p><strong>Available to Withdraw:</strong> $13.50</p>
+    <p><strong>Max Withdrawal:</strong> $20</p>
+    <a href="privacy-support.html">Privacy & Support</a><p> </p>Available In:</strong> 10 days</p>
+  </div>
+
+  <div class="invite-text">
+    Invite your friends and earn 5% from their daily ad views!
+    <br><strong>Your Invite Link:</strong> https://yourapp.com/invite?code=abc123
+  </div>
+  
+
+  <button class="btn">Withdraw via PayPal</button>
+  <button class="btn">Withdraw via Eversend</button>
+  <button class="btn">Withdraw via Bank Transfer</button>
+  <button class="btn" style="background: #FF9800;">Upgrade to VIP</button>
+</div>
+
+<div class="bottom-nav">
+  <a href="watch-ads.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="vip.html">💎</a>
+  <a href="profile.html">👤</a>
+  <a href="withdraw.html" class="active">💼</a>
+   <a href="settings.html">⚙️</a>
+</div>
+<h2>Withdraw Funds</h2>
+<form id="withdrawForm">
+  <input type="number" id="amount" placeholder="Enter amount ($)" required /><br><br>
+  <input type="text" id="eversendEmail" placeholder="Enter your Eversend email or phone" required /><br><br>
+  <button type="submit">Request Withdrawal</button>
+</form>
+<p id="withdrawMessage"></p>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

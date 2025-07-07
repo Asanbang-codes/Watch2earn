@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Ads - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      padding: 15px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo { font-weight: bold; }
+    .settings { font-size: 20px; cursor: pointer; }
+    .timer, .buttons, .bottom-nav, .cash-box, .earnBreakdown {
+      padding: 10px;
+      margin: 10px;
+    }
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: #fff;
+      padding: 10px 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    .bottom-nav a {
+      text-align: center;
+      flex: 1;
+      padding: 10px;
+      text-decoration: none;
+      color: #999;
+      font-weight: bold;
+    }
+    .bottom-nav a.active {
+      color: #007bff;
+    }
+    button {
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #watchAdBtn {
+      background-color: #007bff;
+      color: white;
+      width: 90%;
+      margin: 0 auto;
+    }
+    .vip-btn {
+      background-color: gold;
+      color: black;
+      width: 90%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">👁️ Watch Ads</div>
+    <div class="settings" onclick="window.location.href='settings.html'">⚙️</div>
+  </header>
+
+  <div style="padding: 20px;">
+    <p>🎥 Ads Watched: 50/50</p>
+    <p>💸 Your Daily Earnings: $4.00 (You earn 40% of total ad revenue)</p>
+
+    <div class="earnBreakdown" style="background:#fff; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,0.1);">
+      <h4>💼 Earnings Breakdown</h4>
+      <p>Total Ad Revenue (Today): <b>$10.00</b></p>
+      <p>Your Share (40%): <b>$4.00</b></p>
+      <p>Platform Share (60%): <b>$6.00</b></p>
+      <p style="font-size: 13px; color: gray;">Why? This helps us pay everyone and build the platform</p>
+    </div>
+
+    <p>🔁 Referral Bonus: 5% of your friends’ daily earnings</p>
+    <div class="timer">
+      ⏱️ Time left: <strong>5h 20m</strong> to complete daily goal
+    </div>
+
+    <button onclick="window.location.href='ads-placement.html'">🎞️Watch Ad</button>
+    <button class="vip-btn" onclick="window.location.href='vip.html'">💎 Upgrade to VIP</button>
+
+    <a href="admin-withdrawals.html" style="font-weight:bold; color:blue; display:block; margin-top:20px;">
+      🔐 Go to Admin Withdrawal Panel
+    </a>
+
+    <div style="margin-top: 20px; font-size: 18px;">
+      Today’s Earnings: <span id="today-earned">$0.00</span><br>
+      Total Earned (Fake): <span id="fake-balance">$0.00</span>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="watch-ads.html" class="active">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="vip.html">💎 VIP</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="withdraw.html">💼 Wallet</a>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Your Logic Script -->
+  <script src="script.js"></script>
+</body>
+</html>
