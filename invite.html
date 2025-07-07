@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invite & Leaderboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      text-align: center;
+      margin: 20px;
+      color: #003366;
+    }
+    .top-earners, .referral-ranking {
+      background: white;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .top-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .top-row div {
+      text-align: center;
+    }
+    .top-row img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    .highlight {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin: 0 10px 15px 10px;
+    }
+    .list {
+      padding: 0 10px;
+    }
+    .list p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .rank {
+      font-weight: bold;
+      color: #00b300;
+    }
+    .footer-msg {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      border-top: 1px solid #ccc;
+    }
+    .nav-bar a {
+      text-decoration: none;
+      color: #888;
+      font-size: 20px;
+    }
+    .nav-bar a.active {
+      color: #00b300;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Leaderboard</h2>
+
+  <div class="top-earners">
+    <div class="top-row">
+      <div>
+        <div>🥈</div>
+        <div>$112.50</div>
+      </div>
+      <div>
+        <div>🥇</div>
+        <div><strong>JohnSmith</strong></div>
+        <div>$130.00</div>
+      </div>
+      <div>
+        <div>🥉</div>
+        <div>$97.00</div>
+      </div>
+    </div>
+    <div class="highlight">Top 10 earners today win a $50 bonus!</div>
+    <div class="list">
+      <p><span class="rank">#4</span> StarPlayer12 - $85.00</p>
+      <p><span class="rank">#5</span> ProGamer58 - $79.50</p>
+      <p><span class="rank">#6</span> CoolCat90 - $65.00</p>
+      <p><span class="rank">#7</span> SwiftFoxx44 - $61.00</p>
+      <p><span class="rank">#8</span> Lightning33 - $55.25</p>
+    </div>
+  </div>
+
+  <div class="referral-ranking">
+    <h3 style="text-align:center;">Referral Ranking</h3>
+    <div class="list">
+      <p><span class="rank">#1</span> EmmaL - 25 referrals</p>
+      <p><span class="rank">#2</span> BrianT - 20 referrals</p>
+      <p><span class="rank">#3</span> DavidK - 18 referrals</p>
+    </div>
+    <div class="footer-msg">
+      You are currently <strong>#234</strong><br/>
+      Invite more friends to rise up the leaderboards!
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <a href="home.html">🏠</a>
+    <a href="dashboard.html">📊</a>
+    <a href="vip.html">💎</a>
+    <a href="earnings.html">💰</a>
+    <a href="settings.html">⚙️</a>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

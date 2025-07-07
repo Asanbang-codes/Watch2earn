@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earnings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding-bottom: 100px;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .settings-icon {
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background-color: white;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #4CAF50;
+    }
+    .card p {
+      font-size: 16px;
+      margin: 5px 0 0;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    .bottom-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Earnings</h1>
+  <div class="settings-icon">⚙️</div>
+</header>
+  <li>see referral earnings and leaderboard </li> 
+  <div class="invite.html"> 
+  </div> <a href="invite.html">Invite & Leaderboard</a>
+
+<div class="container">
+  <div class="card">
+    <h2>Ad Earnings</h2>
+    <p>$147.50 earned from 285 ads</p>
+  </div>
+  <div class="card">
+    <h2>Referral Earnings</h2>
+    <p>$259.00 earned from 24 invites</p>
+  </div>
+  <div class="card">
+    <h2>VIP Bonus</h2>
+    <p>$100 monthly reward</p>
+  </div>
+  <div class="card">
+    <h2>Total Earnings</h2>
+    <p><strong>$500.50</strong></p>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <a href="watch-ads.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="vip.html">💎</a>
+  <a href="profile.html">👤</a>
+  <a href="withdraw.html">💼</a>
+</div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+  </body>
+</html>
