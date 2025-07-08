@@ -239,3 +239,12 @@ if (todayEarned) todayEarned.innerText = `$${(dailyAdClicks * 0.20).toFixed(2)}`
 if (totalBalance) totalBalance.innerText = `$${totalEarned.toFixed(2)}`;
   }
   });
+  auth.onAuthStateChanged(user => {
+  if (user) {
+    const uid = user.uid;
+    const referralLinkInput = document.getElementById("referralLink");
+    if (referralLinkInput) {
+      referralLinkInput.value = `${window.location.origin}/signup.html?ref=${uid}`;
+    }
+  }
+});
