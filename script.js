@@ -248,3 +248,49 @@ if (totalBalance) totalBalance.innerText = `$${totalEarned.toFixed(2)}`;
     }
   }
 });
+  // === Firebase Config === console.log("✅ Firebase and script.js loaded!"); const firebaseConfig = { apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I", authDomain: "watch2earn-28ca3.firebaseapp.com", projectId: "watch2earn-28ca3", storageBucket: "watch2earn-28ca3.appspot.com", messagingSenderId: "566681383488", appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5", measurementId: "G-YE13WV835N" };
+
+// === Initialize Firebase === firebase.initializeApp(firebaseConfig); const auth = firebase.auth(); const db = firebase.firestore();
+
+// === Referral Capture === document.addEventListener("DOMContentLoaded", () => { const urlParams = new URLSearchParams(window.location.search); const referrerId = urlParams.get("ref"); if (referrerId) { localStorage.setItem("referrer", referrerId); console.log("🔗 Referrer ID captured:", referrerId); }
+
+const copyBtn = document.getElementById("copyReferralBtn"); const referralInput = document.getElementById("referralLink"); const copyMessage = document.getElementById("copyMessage");
+
+auth.onAuthStateChanged((user) => { if (user && referralInput) { const link = ${window.location.origin}/signup.html?ref=${user.uid}; referralInput.value = link; } });
+
+if (copyBtn && referralInput) { copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(referralInput.value).then(() => { if (copyMessage) copyMessage.innerText = "Copied!"; }); }); } });
+
+// === Earnings Tracking === auth.onAuthStateChanged(async (user) => { if (!user) return; const userId = user.uid; const referrer = localStorage.getItem("referrer");
+
+const today = new Date().toLocaleDateString(); const earningsRef = db.collection("users").doc(userId); const docSnap = await earningsRef.get(); const userData = docSnap.exists ? docSnap.data() : {};
+
+const storedDate = userData.date || ""; let earnedToday = storedDate === today ? userData.earnedToday || 0 : 0;
+
+// Display values if elements exist const dailyEarned = document.getElementById("today-earned"); const fakeBalance = document.getElementById("fake-balance"); if (dailyEarned) dailyEarned.innerText = $${earnedToday.toFixed(2)}; if (fakeBalance) fakeBalance.innerText = $${(userData.totalEarned || 0).toFixed(2)};
+
+const watchAdBtn = document.getElementById("watchAdBtn"); if (watchAdBtn) { watchAdBtn.addEventListener("click", async () => { if (earnedToday >= 10) { alert("✅ You've reached today's limit!"); return; } earnedToday += 0.20; const totalEarned = (userData.totalEarned || 0) + 0.20;
+
+await earningsRef.set({
+    date: today,
+    earnedToday,
+    totalEarned,
+  }, { merge: true });
+
+  if (dailyEarned) dailyEarned.innerText = `$${earnedToday.toFixed(2)}`;
+  if (fakeBalance) fakeBalance.innerText = `$${totalEarned.toFixed(2)}`;
+
+  // Referral Bonus
+  if (referrer) {
+    const refBonus = 0.20 * 0.05;
+    const refDoc = await db.collection("users").doc(referrer).get();
+    const refData = refDoc.exists ? refDoc.data() : {};
+    await db.collection("users").doc(referrer).set({
+      refBonus: (refData.refBonus || 0) + refBonus,
+      refCount: (refData.refCount || 0) + 1,
+    }, { merge: true });
+  }
+});
+
+} });
+
+
