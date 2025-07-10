@@ -348,4 +348,14 @@ auth.onAuthStateChanged(user => {
     }
   }
 });
+// When saving referral
+console.log("🟢 Saving referral bonus to Firestore...");
+
+// After set/update
+console.log("✅ Referral bonus saved successfully");
+
+// On error
+.catch(err => {
+  console.error("❌ Error saving referral bonus:", err);
+});
 
