@@ -292,5 +292,60 @@ await earningsRef.set({
 });
 
 } });
+auth.onAuthStateChanged(user => {
+  if (user) {
+    const uid = user.uid;
+    const today = new Date().toLocaleDateString();
 
+    const adButtons = document.querySelectorAll(".ad-click-track");
+    adButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const userRef = db.collection("users").doc(uid);
+
+        userRef.get().then(doc => {
+          const data = doc.data() || {};
+          const lastDate = data.lastClickDate || "";
+          let dailyClicks = data.dailyClicks || 0;
+          let totalClicks = data.totalClicks || 0;
+          let earnings = data.earnings || 0;
+
+          if (lastDate !== today) {
+            dailyClicks = 0;
+          }
+
+          if (dailyClicks < 50) {
+            dailyClicks++;
+            totalClicks++;
+            earnings += 0.20; // 💰 Set your per-click rate here
+
+            userRef.set({
+              lastClickDate: today,
+              dailyClicks: dailyClicks,
+              totalClicks: totalClicks,
+              earnings: earnings
+            }, { merge: true });
+
+            const adStatBox = document.getElementById("ad-stats");
+            if (adStatBox) {
+              adStatBox.innerText = `🖱️ Clicks Today: ${dailyClicks} / 50 | 💰 Earned: $${earnings.toFixed(2)}`;
+            }
+          } else {
+            alert("⚠️ Daily ad limit reached (50). Come back tomorrow!");
+          }
+        });
+      });
+    });
+
+    // Update the stats on load too
+    const adStatBox = document.getElementById("ad-stats");
+    if (adStatBox) {
+      db.collection("users").doc(uid).onSnapshot(doc => {
+        const data = doc.data();
+        if (data) {
+          adStatBox.innerText = `🖱️ Clicks Today: ${data.dailyClicks || 0} / 50 | 💰 Earned: $${(data.earnings || 0).toFixed(2)}`;
+        }
+      });
+    }
+  }
+});
 
