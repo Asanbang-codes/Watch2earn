@@ -358,4 +358,10 @@ console.log("✅ Referral bonus saved successfully");
 .catch(err => {
   console.error("❌ Error saving referral bonus:", err);
 });
-
+referrerRef.get().then(doc => {
+  if (doc.exists) {
+    console.log("👤 Referrer found:", doc.id);
+  } else {
+    console.log("❌ Referrer not found in Firestore");
+  }
+});
