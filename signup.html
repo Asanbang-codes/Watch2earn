@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Watch2Earn</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -56,11 +58,28 @@
       text-decoration: none;
     }
   </style>
-  <title>SignUp</title>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+</head>
+<body>
 
+  <div class="form-container">
+    <p><strong>Welcome to Watch2Earn!</strong><br>Earn daily by watching ads.</p>
+    <h2>Sign Up</h2>
+    <input type="email" id="signupEmail" placeholder="Email" required><br>
+    <input type="password" id="signupPassword" placeholder="Password" required><br>
+    <button id="signupBtn">Sign Up</button>
+    <div class="link">
+      <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Firebase Config -->
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
       authDomain: "watch2earn-28ca3.firebaseapp.com",
@@ -69,41 +88,47 @@
       messagingSenderId: "566681383488",
       appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
     };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  <!-- Signup Script -->
+  <script>
+    const signupBtn = document.getElementById("signupBtn");
 
-    window.signUpUser = function() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    signupBtn.addEventListener("click", () => {
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+      const referrer = localStorage.getItem("referrer");
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Signup successful!");
+      if (!email || !password) {
+        alert("⚠️ Please fill in all fields.");
+        return;
+      }
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const userId = userCredential.user.uid;
+
+          // Save user data to Firestore
+          db.collection("users").doc(userId).set({
+            email: email,
+            referrer: referrer || null,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          alert("✅ Signup successful!");
           window.location.href = "watch-ads.html";
         })
-        .catch(error => alert("Error: " + error.message));
-    };
+        .catch((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            alert("⚠️ This email is already registered. Please login.");
+          } else {
+            alert("❌ Signup error: " + error.message);
+          }
+        });
+    });
   </script>
-</head>
-<body>
-  <p>WELCOME TO WATCH2EARN PLATFORM EARN MONEY BY WATCHING ADS DAILY</p>
-  <h2>Sign Up</h2>
-  <input type="email" id="signupEmail" placeholder="Email" required><br><br>
-  <input type="password" id="signupPassword" placeholder="Password" required><br><br>
-  <button id="signupBtn">Sign Up</button>
-  <p>Already have an account? <a href="login.html">Login</a></p>
-  .catch((error) => {
-  if (error.code === 'auth/email-already-in-use') {
-    alert("⚠️ This email is already registered. Please log in.");
-  } else {
-    alert("❌ Signup error: " + error.message);
-  }
-});
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>
