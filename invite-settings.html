@@ -2,197 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Invite & Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Referral & Settings Hub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      padding: 20px;
       margin: 0;
-      padding-bottom: 80px;
-      background-color: #f4f4f4;
+      background: #f4f4f4;
     }
     h2 {
-      text-align: center;
-      margin: 20px;
-      color: #003366;
+      color: #222;
     }
-    .top-earners, .referral-ranking {
+    .section {
       background: white;
-      margin: 10px;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
-    .top-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .top-row div {
-      text-align: center;
-    }
-    .top-row img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-    }
-    .highlight {
-      background: #003366;
+    .share-buttons button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
       color: white;
-      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+    .success-box {
+      background: #d4edda;
+      color: #155724;
       padding: 10px;
       border-radius: 8px;
-      font-weight: bold;
-      margin: 0 10px 15px 10px;
     }
-    .list {
-      padding: 0 10px;
-    }
-    .list p {
-      margin: 8px 0;
-      font-size: 15px;
-    }
-    .rank {
-      font-weight: bold;
-      color: #00b300;
-    }
-    .footer-msg {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 20px;
-    }
-    .nav-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 15px 0;
-      border-top: 1px solid #ccc;
-    }
-    .nav-bar a {
-      text-decoration: none;
-      color: #888;
-      font-size: 20px;
-    }
-    .nav-bar a.active {
-      color: #00b300;
+    input[type=text] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
 
-  <h2>🏆 Leaderboard</h2>
-
-  <div class="top-earners">
-    <div class="top-row" id="topEarners">
-      <!-- Dynamic Top 3 earners will be injected here -->
-    </div>
-    <div class="highlight">Top 10 earners today win a $50 bonus!</div>
-    <div class="list" id="top10List">
-      <!-- Ranks 4-10 -->
-    </div>
-  </div>
-
-  <div class="referral-ranking">
-    <h3 style="text-align:center;">Referral Ranking</h3>
-    <div class="list" id="referralList">
-      <!-- Referral data -->
-    </div>
-    <div class="footer-msg" id="yourRank">
-      Checking your current rank...
+  <div class="section">
+    <h2>Invite Friends & Earn More</h2>
+    <p>Share your referral link to earn 5% from your friend's earnings!</p>
+    <label>Your Invite Link:</label>
+    <input type="text" id="referralLink" value="Loading..." readonly>
+    <div class="share-buttons">
+      <button onclick="share('whatsapp')">WhatsApp</button>
+      <button onclick="share('facebook')">Facebook</button>
+      <button onclick="share('email')">Email</button>
+      <button onclick="copyLink()">Copy Link</button>
     </div>
   </div>
 
-  <div class="nav-bar">
-    <a href="watch-ads.html">🏠</a>
-    <a href="dashboard.html">📊</a>
-    <a href="vip.html">💎</a>
-    <a href="earnings.html">💰</a>
-    <a href="settings.html">⚙️</a>
+  <div class="section">
+    <h2>Why Invite?</h2>
+    <p>✅ Invite 100 friends = Up to $1,000 in referral rewards!</p>
+    <p>✅ Build your team and unlock bonuses.</p>
+    <p>✅ VIP users get 10% referral bonus.</p>
   </div>
 
-  <!-- Firebase SDK -->
+  <div class="section">
+    <h2>Last Withdrawal</h2>
+    <div class="success-box" id="lastWithdrawal">
+      <p>Loading withdrawal history...</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Settings Preferences</h2>
+    <div class="toggle">
+      <span>Dark Mode</span>
+      <input type="checkbox" onclick="toggleTheme()">
+    </div>
+    <div class="toggle">
+      <span>Notifications</span>
+      <input type="checkbox">
+    </div>
+    <div class="toggle">
+      <span>Manage Account</span>
+      <button onclick="alert('Coming soon')">Open</button>
+    </div>
+  </div>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
   <script>
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
       authDomain: "watch2earn-28ca3.firebaseapp.com",
       projectId: "watch2earn-28ca3"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Load leaderboard data
-    function loadLeaderboard() {
-      db.collection("users").orderBy("totalEarned", "desc").limit(10).get().then(snapshot => {
-        let topRowHTML = "";
-        let listHTML = "";
-        snapshot.docs.forEach((doc, index) => {
-          const user = doc.data();
-          const name = user.username || user.email || "User";
-          const earned = user.totalEarned?.toFixed(2) || "0.00";
+    // Show user referral link
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const referralLink = `https://yourapp.com/signup.html?ref=${user.uid}`;
+        document.getElementById("referralLink").value = referralLink;
 
-          if (index === 0) {
-            topRowHTML += `<div><div>🥇</div><div><strong>${name}</strong></div><div>$${earned}</div></div>`;
-          } else if (index === 1) {
-            topRowHTML = `<div><div>🥈</div><div>$${earned}</div></div>` + topRowHTML;
-          } else if (index === 2) {
-            topRowHTML += `<div><div>🥉</div><div>$${earned}</div></div>`;
-          } else {
-            listHTML += `<p><span class="rank">#${index + 1}</span> ${name} - $${earned}</p>`;
-          }
-        });
-
-        document.getElementById("topEarners").innerHTML = topRowHTML;
-        document.getElementById("top10List").innerHTML = listHTML;
-      });
-    }
-
-    function loadReferralRanks() {
-      db.collection("users").orderBy("referralCount", "desc").limit(3).get().then(snapshot => {
-        let html = "";
-        snapshot.docs.forEach((doc, index) => {
-          const user = doc.data();
-          const name = user.username || user.email;
-          const count = user.referralCount || 0;
-          html += `<p><span class="rank">#${index + 1}</span> ${name} - ${count} referrals</p>`;
-        });
-        document.getElementById("referralList").innerHTML = html;
-      });
-    }
-
-    function getCurrentUserRank() {
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          db.collection("users").orderBy("referralCount", "desc").get().then(snapshot => {
-            let rank = "Not ranked";
-            snapshot.docs.forEach((doc, index) => {
-              if (doc.id === user.uid) {
-                rank = `#${index + 1}`;
-              }
-            });
-            document.getElementById("yourRank").innerHTML = `You are currently <strong>${rank}</strong><br/>Invite more friends to rise up the leaderboards!`;
+        // Load latest withdrawal
+        db.collection("withdrawals")
+          .where("userId", "==", user.uid)
+          .orderBy("date", "desc")
+          .limit(1)
+          .get()
+          .then(snapshot => {
+            if (!snapshot.empty) {
+              const data = snapshot.docs[0].data();
+              const date = new Date(data.date.seconds * 1000).toLocaleDateString();
+              const html = `
+                <p><strong>Amount:</strong> $${data.amount.toFixed(2)}</p>
+                <p><strong>Date:</strong> ${date}</p>
+                <p><strong>Status:</strong> ✅ ${data.status}</p>
+              `;
+              document.getElementById("lastWithdrawal").innerHTML = html;
+            } else {
+              document.getElementById("lastWithdrawal").innerHTML = "<p>No withdrawal found</p>";
+            }
           });
-        } else {
-          document.getElementById("yourRank").innerText = "Please log in to see your ranking.";
-        }
-      });
+      }
+    });
+
+    function share(platform) {
+      const link = document.getElementById("referralLink").value;
+      let shareURL = "#";
+      if (platform === "whatsapp") {
+        shareURL = `https://wa.me/?text=Join%20me%20and%20earn!%20${link}`;
+      } else if (platform === "facebook") {
+        shareURL = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
+      } else if (platform === "email") {
+        shareURL = `mailto:?subject=Join me on Watch2Earn&body=Click here to sign up: ${link}`;
+      }
+      window.open(shareURL, "_blank");
     }
 
-    // Run on page load
-    loadLeaderboard();
-    loadReferralRanks();
-    getCurrentUserRank();
+    function copyLink() {
+      const input = document.getElementById("referralLink");
+      input.select();
+      document.execCommand("copy");
+      alert("Referral link copied!");
+    }
+
+    function toggleTheme() {
+      alert("Dark mode feature coming soon!");
+    }
   </script>
 </body>
 </html>
