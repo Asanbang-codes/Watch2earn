@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width,initail-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Withdrawal History</title>
   <style>
     body {
@@ -66,27 +65,11 @@
 
 <header>
   <h1>Withdrawal History</h1>
-  <div class="settings-icon">⚙️</div>
+  <div class="settings-icon" onclick="window.location='settings.html'">⚙️</div>
 </header>
 
-<div class="container">
-  <div class="history-item">
-    <span><strong>Amount:</strong> $20.00</span>
-    <span><strong>Date:</strong> May 26, 2025</span>
-    <span class="status" style="color: green;">Status: Completed</span>
-  </div>
-
-  <div class="history-item">
-    <span><strong>Amount:</strong> $15.00</span>
-    <span><strong>Date:</strong> May 10, 2025</span>
-    <span class="status" style="color: orange;">Status: Pending</span>
-  </div>
-
-  <div class="history-item">
-    <span><strong>Amount:</strong> $10.00</span>
-    <span><strong>Date:</strong> April 22, 2025</span>
-    <span class="status" style="color: red;">Status: Rejected</span>
-  </div>
+<div class="container" id="historyList">
+  <p>Loading history...</p>
 </div>
 
 <div class="bottom-nav">
@@ -97,11 +80,61 @@
   <a href="withdraw.html">💼</a>
 </div>
 
-</body>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- Your script file -->
-  <script src="script.js"></script>
-</html>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+    authDomain: "watch2earn-28ca3.firebaseapp.com",
+    projectId: "watch2earn-28ca3"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "<p>Fetching your records...</p>";
+
+      db.collection("withdrawals")
+        .where("userId", "==", user.uid)
+        .orderBy("date", "desc")
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            list.innerHTML = "<p>No withdrawals found yet.</p>";
+            return;
+          }
+
+          let html = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const amount = data.amount.toFixed(2);
+            const status = data.status || "Pending";
+            const color = status === "Completed" ? "green" :
+                          status === "Rejected" ? "red" : "orange";
+            const date = new Date(data.date.seconds * 1000).toLocaleDateString();
+
+            html += `
+              <div class="history-item">
+                <span><strong>Amount:</strong> $${amount}</span>
+                <span><strong>Date:</strong> ${date}</span>
+                <span class="status" style="color:${color};">Status: ${status}</span>
+              </div>`;
+          });
+          list.innerHTML = html;
+        })
+        .catch(error => {
+          list.innerHTML = "<p>Error loading data.</p>";
+          console.error("Error loading history:", error);
+        });
+    }
+  });
+</script>
+
+</body>
+  </html>
