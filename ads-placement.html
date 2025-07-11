@@ -1,84 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Watch Ads Now</title>
-<style>
-body {
-font-family: Arial, sans-serif;
-background-color: #f9f9f9;
-padding: 20px;
-text-align: center;
-}
-h2 {
-margin-bottom: 10px;
-}
-button.ad-btn {
-display: block;
-margin: 15px auto;
-padding: 15px;
-width: 90%;
-max-width: 400px;
-font-size: 16px;
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-}
-button.ad-btn:disabled {
-background-color: #ccc;
-cursor: not-allowed;
-}
-#status {
-margin-top: 20px;
-font-size: 18px;
-color: green;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watch Ads Now</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .ad-btn {
+      display: block;
+      margin: 15px auto;
+      padding: 15px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .ad-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
+  </style>
 </head>
 <body>
 
 <h2>🎥 Watch Ads to Earn</h2>
 <p>Click at least <strong>3 ads</strong> to complete today's goal.</p>
 
-  <!-- Adsterra Direct Link Ad Button -->
-  <a class="ad-btn" href="https://www.profitableratecpm.com/izg4ekfpv?key=133cdabfef4cb5e80876952824d61c78" target="_blank">
-    🚀 Watch Adsterra Ad
-  </a>
-  <!-- Direct ad link -->
-<button class="ad-click-track" onclick="window.open('https://your-ad-link.com', '_blank')">Watch Ad</button>
+<!-- Example Ouo.io or Adsterra ad buttons -->
+<button class="ad-btn" onclick="openAd('https://ouo.io/rvM9KA', this)">Ad 1</button>
+<button class="ad-btn" onclick="openAd('https://ouo.io/h2HhO5', this)">Ad 2</button>
+<button class="ad-btn" onclick="openAd('https://ouo.io/wnx7d4', this)">Ad 3</button>
 
-<!-- Adsterra embed (optional) -->
-<!-- You can also use iframes or native banner scripts -->
+<!-- PropellerAds -->
+<button class="ad-btn" onclick="openAd('https://your-propeller-link1', this)">Ad 4 (Propeller)</button>
+<button class="ad-btn" onclick="openAd('https://your-propeller-link2', this)">Ad 5 (Propeller)</button>
+<button class="ad-btn" onclick="openAd('https://your-propeller-link3', this)">Ad 6 (Propeller)</button>
 
-<!-- Show stats -->
-<div id="ad-stats" style="margin-top: 15px; color: green; font-weight: bold;"></div>
-<!-- PropellerAds (add when ready) -->
-<button class="ad-btn" onclick="openAd('https://your-propeller-link1', this)">Watch Ad 7 (PropellerAds)</button>
-<button class="ad-btn" onclick="openAd('https://your-propeller-link2', this)">Watch Ad 8 (PropellerAds)</button>
-<button class="ad-btn" onclick="openAd('https://your-propeller-link3', this)">Watch Ad 9 (PropellerAds)</button>
+<!-- Native Ad -->
+<div class="ad-box" style="margin-top: 25px;">
+  <script async="async" data-cfasync="false" src="//pl27012129.profitableratecpm.com/367aac94699c6fae0cf8bb6b3f1f4ab1/invoke.js"></script>
+  <div id="container-367aac94699c6fae0cf8bb6b3f1f4ab1"></div>
+</div>
 
 <div id="status">Ads Watched: 0 / 3</div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 <script>
-let watchedCount = 0;
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+    authDomain: "watch2earn-28ca3.firebaseapp.com",
+    projectId: "watch2earn-28ca3",
+  };
 
-function openAd(url, button) {
-// Open ad in new tab
-window.open(url, '_blank');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-// Disable the button
-button.disabled = true;
+  let watchedCount = 0;
 
-// Count the click
-watchedCount++;
-document.getElementById('status').innerText = `Ads Watched: ${watchedCount} / 3`;
+  function openAd(url, button) {
+    window.open(url, '_blank');
+    button.disabled = true;
+    watchedCount++;
 
-if (watchedCount >= 3) {
-document.getElementById('status').innerText = `✅ You've completed today's ad goal!`;
-}
-}
+    // Update UI
+    const statusText = watchedCount >= 3 
+      ? "✅ You've completed today's ad goal!" 
+      : `Ads Watched: ${watchedCount} / 3`;
+    document.getElementById('status').innerText = statusText;
+
+    // Save progress in Firestore
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const userRef = db.collection("users").doc(user.uid);
+        userRef.set({
+          adsWatchedToday: firebase.firestore.FieldValue.increment(1),
+          lastWatched: new Date()
+        }, { merge: true });
+      }
+    });
+  }
 </script>
-</boboyour-link2'q
+
+</body>
+</html>
