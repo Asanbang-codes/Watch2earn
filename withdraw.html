@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Withdraw</title>
   <style>
     body {
@@ -39,9 +39,15 @@
       margin-top: 10px;
       cursor: pointer;
     }
-    .invite-text {
+    form {
       margin-top: 20px;
-      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
     .bottom-nav {
       position: fixed;
@@ -61,6 +67,11 @@
     .bottom-nav .active {
       color: #4CAF50;
     }
+    #withdrawMessage {
+      color: green;
+      font-weight: bold;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -69,25 +80,26 @@
 
 <div class="section">
   <div class="earnings">
-    <p><strong>From Ad Watch:</strong> $10.00</p>
-    <p><strong>From Invites (5%):</strong> $2.50</p>
-    <p><strong>Bonus Earnings:</strong> $1.00</p>
-    <p><strong>Total Earnings:</strong> $13.50</p>
-    <p><strong>Available to Withdraw:</strong> $13.50</p>
-    <p><strong>Max Withdrawal:</strong> $20</p>
-    <a href="privacy-support.html">Privacy & Support</a><p> </p>Available In:</strong> 10 days</p>
+    <p><strong>Ad Earnings:</strong> <span id="adEarnings">$0.00</span></p>
+    <p><strong>Referral Bonus (5%):</strong> <span id="referralEarnings">$0.00</span></p>
+    <p><strong>Total Available:</strong> <span id="totalEarnings">$0.00</span></p>
+    <p><strong>Withdraw Limit:</strong> Minimum $1</p>
+    <a href="privacyandsupport.html">Privacy & Support</a>
   </div>
 
   <div class="invite-text">
-    Invite your friends and earn 5% from their daily ad views!
-    <br><strong>Your Invite Link:</strong> https://yourapp.com/invite?code=abc123
+    Invite your friends and earn 5% of their daily views!<br>
+    <strong>Your Invite Link:</strong> <span id="inviteLink">...</span>
   </div>
-  
 
-  <button class="btn">Withdraw via PayPal</button>
-  <button class="btn">Withdraw via Eversend</button>
-  <button class="btn">Withdraw via Bank Transfer</button>
-  <button class="btn" style="background: #FF9800;">Upgrade to VIP</button>
+  <form id="withdrawForm">
+    <h3>Withdraw Funds</h3>
+    <input type="number" id="amount" placeholder="Enter amount ($)" required />
+    <input type="text" id="methodInfo" placeholder="Your PayPal, Eversend or Bank details" required />
+    <button class="btn" type="submit">Request Withdrawal</button>
+  </form>
+
+  <p id="withdrawMessage"></p>
 </div>
 
 <div class="bottom-nav">
@@ -96,19 +108,89 @@
   <a href="vip.html">💎</a>
   <a href="profile.html">👤</a>
   <a href="withdraw.html" class="active">💼</a>
-   <a href="settings.html">⚙️</a>
+  <a href="settings.html">⚙️</a>
 </div>
-<h2>Withdraw Funds</h2>
-<form id="withdrawForm">
-  <input type="number" id="amount" placeholder="Enter amount ($)" required /><br><br>
-  <input type="text" id="eversendEmail" placeholder="Enter your Eversend email or phone" required /><br><br>
-  <button type="submit">Request Withdrawal</button>
-</form>
-<p id="withdrawMessage"></p>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="script.js"></script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+    authDomain: "watch2earn-28ca3.firebaseapp.com",
+    projectId: "watch2earn-28ca3",
+    storageBucket: "watch2earn-28ca3.appspot.com",
+    messagingSenderId: "566681383488",
+    appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let currentUser = null;
+  let totalEarnings = 0;
+
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    currentUser = user;
+    const uid = user.uid;
+
+    // Load earnings from Firestore
+    db.collection("users").doc(uid).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        const adEarn = data.adEarnings || 0;
+        const refEarn = data.referralEarnings || 0;
+        totalEarnings = adEarn + refEarn;
+
+        document.getElementById("adEarnings").textContent = `$${adEarn.toFixed(2)}`;
+        document.getElementById("referralEarnings").textContent = `$${refEarn.toFixed(2)}`;
+        document.getElementById("totalEarnings").textContent = `$${totalEarnings.toFixed(2)}`;
+        document.getElementById("inviteLink").textContent = `https://watch2earn.xyz/signup.html?ref=${uid}`;
+      }
+    });
+  });
+
+  // Withdraw form submission
+  document.getElementById("withdrawForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const amount = parseFloat(document.getElementById("amount").value);
+    const methodInfo = document.getElementById("methodInfo").value;
+    const message = document.getElementById("withdrawMessage");
+
+    if (amount > totalEarnings) {
+      message.style.color = "red";
+      message.textContent = "❌ You don’t have enough earnings!";
+      return;
+    }
+
+    if (amount < 1) {
+      message.style.color = "red";
+      message.textContent = "❌ Minimum withdrawal is $1";
+      return;
+    }
+
+    db.collection("withdrawals").add({
+      uid: currentUser.uid,
+      email: currentUser.email,
+      amount: amount,
+      method: methodInfo,
+      status: "pending",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      message.style.color = "green";
+      message.textContent = "✅ Withdrawal requested! Wait for admin approval.";
+    }).catch(error => {
+      message.style.color = "red";
+      message.textContent = "❌ Error: " + error.message;
+    });
+  });
+</script>
+
 </body>
 </html>
