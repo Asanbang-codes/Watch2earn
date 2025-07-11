@@ -85,58 +85,114 @@
 </head>
 <body>
 
-  <h2>Leaderboard</h2>
+  <h2>🏆 Leaderboard</h2>
 
   <div class="top-earners">
-    <div class="top-row">
-      <div>
-        <div>🥈</div>
-        <div>$112.50</div>
-      </div>
-      <div>
-        <div>🥇</div>
-        <div><strong>JohnSmith</strong></div>
-        <div>$130.00</div>
-      </div>
-      <div>
-        <div>🥉</div>
-        <div>$97.00</div>
-      </div>
+    <div class="top-row" id="topEarners">
+      <!-- Dynamic Top 3 earners will be injected here -->
     </div>
     <div class="highlight">Top 10 earners today win a $50 bonus!</div>
-    <div class="list">
-      <p><span class="rank">#4</span> StarPlayer12 - $85.00</p>
-      <p><span class="rank">#5</span> ProGamer58 - $79.50</p>
-      <p><span class="rank">#6</span> CoolCat90 - $65.00</p>
-      <p><span class="rank">#7</span> SwiftFoxx44 - $61.00</p>
-      <p><span class="rank">#8</span> Lightning33 - $55.25</p>
+    <div class="list" id="top10List">
+      <!-- Ranks 4-10 -->
     </div>
   </div>
 
   <div class="referral-ranking">
     <h3 style="text-align:center;">Referral Ranking</h3>
-    <div class="list">
-      <p><span class="rank">#1</span> EmmaL - 25 referrals</p>
-      <p><span class="rank">#2</span> BrianT - 20 referrals</p>
-      <p><span class="rank">#3</span> DavidK - 18 referrals</p>
+    <div class="list" id="referralList">
+      <!-- Referral data -->
     </div>
-    <div class="footer-msg">
-      You are currently <strong>#234</strong><br/>
-      Invite more friends to rise up the leaderboards!
+    <div class="footer-msg" id="yourRank">
+      Checking your current rank...
     </div>
   </div>
 
   <div class="nav-bar">
-    <a href="home.html">🏠</a>
+    <a href="watch-ads.html">🏠</a>
     <a href="dashboard.html">📊</a>
     <a href="vip.html">💎</a>
     <a href="earnings.html">💰</a>
     <a href="settings.html">⚙️</a>
   </div>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="script.js"></script>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+      authDomain: "watch2earn-28ca3.firebaseapp.com",
+      projectId: "watch2earn-28ca3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Load leaderboard data
+    function loadLeaderboard() {
+      db.collection("users").orderBy("totalEarned", "desc").limit(10).get().then(snapshot => {
+        let topRowHTML = "";
+        let listHTML = "";
+        snapshot.docs.forEach((doc, index) => {
+          const user = doc.data();
+          const name = user.username || user.email || "User";
+          const earned = user.totalEarned?.toFixed(2) || "0.00";
+
+          if (index === 0) {
+            topRowHTML += `<div><div>🥇</div><div><strong>${name}</strong></div><div>$${earned}</div></div>`;
+          } else if (index === 1) {
+            topRowHTML = `<div><div>🥈</div><div>$${earned}</div></div>` + topRowHTML;
+          } else if (index === 2) {
+            topRowHTML += `<div><div>🥉</div><div>$${earned}</div></div>`;
+          } else {
+            listHTML += `<p><span class="rank">#${index + 1}</span> ${name} - $${earned}</p>`;
+          }
+        });
+
+        document.getElementById("topEarners").innerHTML = topRowHTML;
+        document.getElementById("top10List").innerHTML = listHTML;
+      });
+    }
+
+    function loadReferralRanks() {
+      db.collection("users").orderBy("referralCount", "desc").limit(3).get().then(snapshot => {
+        let html = "";
+        snapshot.docs.forEach((doc, index) => {
+          const user = doc.data();
+          const name = user.username || user.email;
+          const count = user.referralCount || 0;
+          html += `<p><span class="rank">#${index + 1}</span> ${name} - ${count} referrals</p>`;
+        });
+        document.getElementById("referralList").innerHTML = html;
+      });
+    }
+
+    function getCurrentUserRank() {
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection("users").orderBy("referralCount", "desc").get().then(snapshot => {
+            let rank = "Not ranked";
+            snapshot.docs.forEach((doc, index) => {
+              if (doc.id === user.uid) {
+                rank = `#${index + 1}`;
+              }
+            });
+            document.getElementById("yourRank").innerHTML = `You are currently <strong>${rank}</strong><br/>Invite more friends to rise up the leaderboards!`;
+          });
+        } else {
+          document.getElementById("yourRank").innerText = "Please log in to see your ranking.";
+        }
+      });
+    }
+
+    // Run on page load
+    loadLeaderboard();
+    loadReferralRanks();
+    getCurrentUserRank();
+  </script>
 </body>
 </html>
