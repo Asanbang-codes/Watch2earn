@@ -83,7 +83,7 @@
   </header>
 
   <div class="dashboard-content">
-    <h2>Total Ad Earnings: <strong>$234.56</strong></h2>
+    <h2>Total Ad Earnings: <strong id="totalEarnings">$0.00</strong></h2>
     <a href="withdraw.html" class="button withdraw">Withdraw</a>
     <a href="watch-ads.html" class="button">Watch More Ads</a>
 
@@ -109,9 +109,55 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Your Firebase Logic Script -->
-  <script src="script.js"></script>
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+      authDomain: "watch2earn-28ca3.firebaseapp.com",
+      projectId: "watch2earn-28ca3",
+      storageBucket: "watch2earn-28ca3.appspot.com",
+      messagingSenderId: "566681383488",
+      appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Dashboard Logic -->
+  <script>
+    const referralLinkInput = document.getElementById("referralLink");
+    const copyBtn = document.getElementById("copyReferralBtn");
+    const copyMessage = document.getElementById("copyMessage");
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const uid = user.uid;
+      const baseURL = window.location.origin;
+      const referralURL = `${baseURL}/signup.html?ref=${uid}`;
+      referralLinkInput.value = referralURL;
+
+      // Fetch earnings
+      db.collection("users").doc(uid).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          const total = data.totalEarnings || 0;
+          document.getElementById("totalEarnings").textContent = "$" + total.toFixed(2);
+        }
+      });
+    });
+
+    copyBtn.addEventListener("click", () => {
+      referralLinkInput.select();
+      document.execCommand("copy");
+      copyMessage.textContent = "✅ Copied!";
+      setTimeout(() => copyMessage.textContent = "", 3000);
+    });
+  </script>
 </body>
-</html>
+  </html>
