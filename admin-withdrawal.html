@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Withdrawals</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .request-card {
+      background-color: white;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .flagged {
+      color: red;
+      font-weight: bold;
+    }
+    .approve-btn, .reject-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .reject-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Withdrawal Panel</h1>
+</header>
+
+<div class="container" id="withdrawalList">
+  <p>Loading withdrawal requests...</p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+    authDomain: "watch2earn-28ca3.firebaseapp.com",
+    projectId: "watch2earn-28ca3",
+    storageBucket: "watch2earn-28ca3.appspot.com",
+    messagingSenderId: "566681383488",
+    appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const adminUID = "YOUR_ADMIN_UID_HERE"; // Replace with your real admin UID
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user || user.uid !== adminUID) {
+      alert("Access denied. Admin only.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    db.collection("withdrawals").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+      const list = document.getElementById("withdrawalList");
+      list.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const flagged = detectFraud(data);
+        const div = document.createElement("div");
+        div.className = "request-card";
+        div.innerHTML = `
+          <p><strong>User:</strong> ${data.email}</p>
+          <p><strong>Amount:</strong> $${data.amount}</p>
+          <p><strong>Method:</strong> ${data.method}</p>
+          <p><strong>Details:</strong> ${data.details}</p>
+          <p><strong>Requested on:</strong> ${new Date(data.timestamp?.toDate()).toLocaleString()}</p>
+          <p class="status ${flagged ? 'flagged' : ''}">${flagged ? '⚠️ Possible rule violation' : '✅ Clean record'}</p>
+          <button class="approve-btn" onclick="approve('${doc.id}')">Approve</button>
+          <button class="reject-btn" onclick="reject('${doc.id}')">Reject</button>
+        `;
+        list.appendChild(div);
+      });
+    });
+  });
+
+  function detectFraud(data) {
+    // Basic AI check for abuse signs
+    return data.watchMethod !== "data" || data.adsWatched < 20;
+  }
+
+  function approve(id) {
+    db.collection("withdrawals").doc(id).update({ status: "approved" });
+    alert("Withdrawal approved");
+  }
+
+  function reject(id) {
+    db.collection("withdrawals").doc(id).update({ status: "rejected" });
+    alert("Withdrawal rejected");
+  }
+</script>
+
+</body>
+                                                                           </html
