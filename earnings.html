@@ -67,28 +67,29 @@
 
 <header>
   <h1>Earnings</h1>
-  <div class="settings-icon">⚙️</div>
+  <div class="settings-icon" onclick="window.location.href='settings.html'">⚙️</div>
 </header>
-  <li>see referral earnings and leaderboard </li> 
-  <div class="invite.html"> 
-  </div> <a href="invite.html">Invite & Leaderboard</a>
+
+<div style="padding: 10px;">
+  <p>🔗 <a href="invite.html">View Referral Leaderboard & Invite Friends</a></p>
+</div>
 
 <div class="container">
   <div class="card">
     <h2>Ad Earnings</h2>
-    <p>$147.50 earned from 285 ads</p>
+    <p id="adEarned">$0.00</p>
   </div>
   <div class="card">
     <h2>Referral Earnings</h2>
-    <p>$259.00 earned from 24 invites</p>
+    <p id="refEarned">$0.00</p>
   </div>
-  <div class="card">
+  <div class="card" id="vipCard" style="display: none;">
     <h2>VIP Bonus</h2>
-    <p>$100 monthly reward</p>
+    <p id="vipBonus">$0.00</p>
   </div>
   <div class="card">
     <h2>Total Earnings</h2>
-    <p><strong>$500.50</strong></p>
+    <p><strong id="totalEarned">$0.00</strong></p>
   </div>
 </div>
 
@@ -99,10 +100,52 @@
   <a href="profile.html">👤</a>
   <a href="withdraw.html">💼</a>
 </div>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="script.js"></script>
-  </body>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+    authDomain: "watch2earn-28ca3.firebaseapp.com",
+    projectId: "watch2earn-28ca3",
+    storageBucket: "watch2earn-28ca3.appspot.com",
+    messagingSenderId: "566681383488",
+    appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    db.collection("users").doc(user.uid).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        const adEarnings = data.adEarnings || 0;
+        const refEarnings = data.referralEarnings || 0;
+        const isVIP = data.isVIP || false;
+        const vipBonus = isVIP ? (data.vipReward || 0) : 0;
+        const total = adEarnings + refEarnings + vipBonus;
+
+        document.getElementById("adEarned").textContent = `$${adEarnings.toFixed(2)}`;
+        document.getElementById("refEarned").textContent = `$${refEarnings.toFixed(2)}`;
+        document.getElementById("totalEarned").textContent = `$${total.toFixed(2)}`;
+
+        if (isVIP) {
+          document.getElementById("vipCard").style.display = "block";
+          document.getElementById("vipBonus").textContent = `$${vipBonus.toFixed(2)}`;
+        }
+      }
+    });
+  });
+</script>
+</body>
 </html>
