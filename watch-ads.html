@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Watch Ads - Home</title>
   <style>
     body {
@@ -13,6 +13,7 @@
       flex-direction: column;
       height: 100vh;
     }
+
     header {
       padding: 15px;
       background: #ffffff;
@@ -21,12 +22,15 @@
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     .logo { font-weight: bold; }
     .settings { font-size: 20px; cursor: pointer; }
+
     .timer, .buttons, .bottom-nav, .cash-box, .earnBreakdown {
       padding: 10px;
       margin: 10px;
     }
+
     .bottom-nav {
       display: flex;
       justify-content: space-around;
@@ -37,6 +41,7 @@
       bottom: 0;
       width: 100%;
     }
+
     .bottom-nav a {
       text-align: center;
       flex: 1;
@@ -45,9 +50,11 @@
       color: #999;
       font-weight: bold;
     }
+
     .bottom-nav a.active {
       color: #007bff;
     }
+
     button {
       padding: 15px;
       margin: 10px 0;
@@ -57,12 +64,14 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     #watchAdBtn {
       background-color: #007bff;
       color: white;
       width: 90%;
       margin: 0 auto;
     }
+
     .vip-btn {
       background-color: gold;
       color: black;
@@ -72,6 +81,7 @@
   </style>
 </head>
 <body>
+
   <header>
     <div class="logo">👁️ Watch Ads</div>
     <div class="settings" onclick="window.location.href='settings.html'">⚙️</div>
@@ -90,6 +100,7 @@
     </div>
 
     <p>🔁 Referral Bonus: 5% of your friends’ daily earnings</p>
+
     <div class="timer">
       ⏱️ Time left: <strong>5h 20m</strong> to complete daily goal
     </div>
@@ -119,9 +130,46 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Your Logic Script -->
-  <script src="script.js"></script>
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBOKQ6mH3WBUfx-CpZQCrw9xRHeXTMi_I",
+      authDomain: "watch2earn-28ca3.firebaseapp.com",
+      projectId: "watch2earn-28ca3",
+      storageBucket: "watch2earn-28ca3.appspot.com",
+      messagingSenderId: "566681383488",
+      appId: "1:566681383488:web:bc913e85b0beca1b2ae5a5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Logic to show earnings -->
+  <script>
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const uid = user.uid;
+      db.collection("users").doc(uid).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          const todayEarnings = data.todayEarnings || 0;
+          const totalEarnings = data.totalEarnings || 0;
+
+          document.getElementById("today-earned").textContent = "$" + todayEarnings.toFixed(2);
+          document.getElementById("fake-balance").textContent = "$" + totalEarnings.toFixed(2);
+        } else {
+          console.warn("No user data found.");
+        }
+      }).catch(error => {
+        console.error("Failed to fetch earnings:", error);
+      });
+    });
+  </script>
 </body>
 </html>
